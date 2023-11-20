@@ -23,7 +23,7 @@ module.exports = {
         fetch(`https://luminabot.xyz/api/json/github?username=${user}`)
             .then(res => {
                 if (res.status === 404) return message.reply({ content: 'User is not found!' });
-                res.json();
+                return res.json(); // Add this line to parse the JSON response
             })
             .then(body => {
                 const embed = new MessageEmbed()

@@ -4,7 +4,7 @@ module.exports = {
     name: 'clear',
     description: 'Clear and Delete Messages',
     aliases: ['cls', 'purge'],
-    emoji: '🧹',
+    emoji: '<a:nuke:1141777079101309000>', // Animated emoji added here
     userperm: ['MANAGE_MESSAGES'],
     botperm: ['MANAGE_MESSAGES'],
     /**
@@ -16,26 +16,40 @@ module.exports = {
         const amount = Number(args[0], 10) || parseInt(args[0]);
         if (isNaN(amount) || !Number.isInteger(amount))
             return message.reply({
-                content: `Please enter a number of message to clear!`,
+                content: `Please enter a valid number of messages to clear!`,
             });
-        if (amount <= 2 || amount > 100)
+        if (amount <= 1 || amount > 100)
             return message.reply({
-                content: `Please enter a number of message between 2 and 100`,
+                content: `Please enter a number of messages between 2 and 100.`,
             });
-        try {
-            await message.delete();
-            await message.channel.bulkDelete(amount).then(async m => {
-                let embed = new MessageEmbed()
-                    .setColor('0x#00ffff')
-                    .setDescription(`:white_check_mark:  Cleared **${m.size}**/**${amount}** messages!`);
 
-                message.channel.send({ embeds: [embed] }).then(msg => msg.delete({ timeout: 4000 }));
-            });
-        } catch (e) {
-            console.log(e);
-            message.channel.send({
-                content: `You can only delete the messages which are not older than 14 days.`,
-            });
+        try {
+            // Delete the command message
+            await message.delete();
+
+            // Bulk delete messages
+            const deletedMessages = await message.channel.bulkDelete(amount, true);
+
+            // Send a confirmation message with an animated emoji
+            const nukeEmoji = '<a:nuke:1141777079101309000>';
+            const embed = new MessageEmbed()
+                .setColor('#00ffff')
+                .setDescription(`${nukeEmoji} Cleared **${deletedMessages.size}**/**${amount}** messages!`);
+
+            const confirmationMessage = await message.channel.send({ embeds: [embed] });
+            confirmationMessage.delete({ timeout: 4000 });
+        } catch (error) {
+            console.error(error);
+
+            if (error.code === 10008) {
+                message.channel.send({
+                    content: `Some messages could not be deleted. They may have already been deleted or are older than 14 days.`,
+                });
+            } else {
+                message.channel.send({
+                    content: `An error occurred while trying to clear messages.`,
+                });
+            }
         }
     },
 };

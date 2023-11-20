@@ -1,0 +1,92 @@
+const { Client, Message, MessageEmbed } = require('discord.js');
+
+module.exports = {
+    name: 'setuprr',
+    description: 'Set up reaction roles in your server',
+    aliases: [],
+    emoji: '🛠️', // Change the emoji to your preference
+    userperm: ['MANAGE_ROLES', 'SEND_MESSAGES'],
+    botperm: ['MANAGE_ROLES', 'SEND_MESSAGES'],
+    /**
+     * @param {Client} client
+     * @param {Message} message
+     * @param {String[]} args
+     */
+    run: async (client, message, args) => {
+        const admin = message.member;
+        if (!admin || !admin.permissions.has('ADMINISTRATOR')) {
+            return message.channel.send("You don't have permission to set up reaction roles.");
+        }
+
+        const filter = response => response.author.id === admin.id;
+        
+        // Prompt to ping the channel
+        await message.channel.send("Mention the channel where you want to set up reaction roles.");
+        const channelPrompt = await message.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] });
+        const channel = channelPrompt.first().mentions.channels.first();
+        if (!channel) {
+            return message.channel.send("Invalid channel mentioned. Reaction role setup canceled.");
+        }
+
+        // Prompt to ping roles and set emojis
+        const roleEmojis = [];
+        await message.channel.send("Mention the roles you want to add for reaction roles, one by one. Respond with a role mention and an emoji (e.g., @Role 🔴). Type `done` when finished.");
+        while (true) {
+            const rolePrompt = await message.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] });
+            const roleResponse = rolePrompt.first().content.toLowerCase();
+
+            if (roleResponse === 'done') {
+                break;
+            }
+
+            const roleMention = roleResponse.match(/<@&(\d+)>/);
+            if (!roleMention) {
+                return message.channel.send("Invalid role mentioned. Reaction role setup canceled.");
+            }
+
+            const emojiPrompt = await message.channel.send("What emoji should this role require?");
+            const emojiResponse = (await emojiPrompt.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })).first().content;
+
+            roleEmojis.push({ role: roleMention[1], emoji: emojiResponse });
+            await message.channel.send(`Role added: <@&${roleMention[1]}> with emoji ${emojiResponse}`);
+        }
+
+        // Set up reaction roles
+        const embed = new MessageEmbed()
+            .setTitle('Reaction Role Setup')
+            .setDescription('React to this message with emojis to assign roles.')
+            .setColor('#FFC0CB');
+
+        const sentEmbed = await channel.send({ embeds: [embed] });
+
+        for (const roleEmoji of roleEmojis) {
+            await sentEmbed.react(roleEmoji.emoji);
+        }
+
+        const filterReaction = (reaction, user) => roleEmojis.map(re => re.emoji).includes(reaction.emoji.name) && !user.bot;
+        const collector = sentEmbed.createReactionCollector({ filter: filterReaction, time: 60000 });
+
+        collector.on('collect', (reaction, user) => {
+            const roleEmoji = roleEmojis.find(re => re.emoji === reaction.emoji.name);
+            if (roleEmoji) {
+                const role = message.guild.roles.cache.get(roleEmoji.role);
+                if (role) {
+                    const member = message.guild.members.cache.get(user.id);
+                    if (member) {
+                        if (member.roles.cache.has(role.id)) {
+                            member.roles.remove(role);
+                            user.send(`Removed role ${role.name}`);
+                        } else {
+                            member.roles.add(role);
+                            user.send(`Added role ${role.name}`);
+                        }
+                    }
+                }
+            }
+        });
+
+        collector.on('end', () => {
+            sentEmbed.edit({ embeds: [embed.setDescription('Reaction role setup ended.')] });
+        });
+    },
+};

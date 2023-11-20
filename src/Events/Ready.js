@@ -2,11 +2,13 @@ require('dotenv').config();
 const client = require('../../index');
 const chalk = require('chalk');
 const prefix = process.env.PREFIX;
+const ownerID = '1066367509965574215'; // Replace with the actual owner's user ID
+const ownerEmoji = '<a:Owner:1142471386112209071>'; // Replace with the actual emoji
 
 const statuses = [
-  { name: `${prefix}help | Live at ${client.guilds.cache.size} servers`, type: 'STREAMING', url: 'https://twitch.tv/#' },
-  { name: '100 Commands', type: 'STREAMING', url: 'https://twitch.tv/#' },
-  { name: 'UNKNOWN PHV', type: 'STREAMING', url: 'https://twitch.tv/#' },
+  { name: `${prefix}help`, type: 'STREAMING', url: 'https://twitch.tv/#' },
+  { name: 'On You', type: 'STREAMING', url: 'https://twitch.tv/#' },
+  { name: `${prefix}serverstats`, type: 'STREAMING', url: 'https://twitch.tv/#' },
   // Add more statuses as needed
 ];
 
@@ -26,6 +28,15 @@ client.on('ready', async () => {
     statusIndex = (statusIndex + 1) % statuses.length;
     setStatus();
   }, 10000); // 10 seconds
+});
+
+client.on('message', (message) => {
+  if (message.author.id === ownerID) {
+    message.react(ownerEmoji)
+      .catch((error) => {
+        console.error(`Failed to react to message: ${error}`);
+      });
+  }
 });
 
 function setStatus() {

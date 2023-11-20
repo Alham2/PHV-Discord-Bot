@@ -5,7 +5,7 @@ module.exports = {
     name: 'pat',
     description: 'Pat someone!',
     aliases: [],
-    emoji: '<a:Peepo_Pat:880270920126709830>',
+    emoji: '<a:pat:1142834477148672120>',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES'],
     /**

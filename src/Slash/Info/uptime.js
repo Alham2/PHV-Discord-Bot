@@ -3,7 +3,7 @@ const pretty = require('pretty-ms');
 
 module.exports = {
     name: 'uptime',
-    description: "Returns information about PHV'S Uptime",
+    description: "Returns information about Uptime",
     emoji: '🕘',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES'],

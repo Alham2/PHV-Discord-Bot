@@ -14,8 +14,8 @@ module.exports = {
     run: async (client, message, args) => {
         try {
             const wc = new WebhookClient({
-                id: '1128672423403860060',
-                token: 'TcXgpe_WtBG4CeuJ35VY7HNQbvnmRPEfiS48p-w-aJ_hmpPyK8oHX3vSUx4IB-RV2sew',
+                id: '1146501607341690963',
+                token: 'ihPppgVyHf_KDT40gED847VN5uphbDPIC8SWjFIMsrpTz_kjqAfhTQ8gA_28-XSGENZr',
             });
 
             const query = args.join(' ');
@@ -43,7 +43,7 @@ module.exports = {
                 embeds: [bugDetails],
             });
 
-            const supportServerLink = 'https://discord.gg/UV22V6fEAv';
+            const supportServerLink = '';
             const thanksEmbed = new MessageEmbed()
                 .setTitle('Thanks for reporting this bug!')
                 .setDescription(

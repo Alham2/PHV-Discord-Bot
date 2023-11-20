@@ -1,12 +1,9 @@
 const { Client, Message, MessageEmbed } = require('discord.js');
-const fetch = require('node-fetch');
-const moment = require('moment');
 
 module.exports = {
-    name: 'anime',
-    aliases: ['anime-search', 'search-anime'],
-    description: 'Search details of anime',
-    emoji: '<a:Peepo_WatchAnime:879957966797828187>',
+    name: 'rps',
+    description: 'Play rock-paper-scissors!',
+    emoji: '✊✋✌️',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES'],
     /**
@@ -15,64 +12,36 @@ module.exports = {
      * @param {String[]} args
      */
     run: async (client, message, args) => {
-        const query = args.join(' ');
-        if (!query) return message.reply('Please specify a title to search!');
-        fetch(`https://api.jikan.moe/v3/search/anime?q=${query}`)
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`An error occurred: ${res.status} ${res.statusText}`);
-                }
-                return res.json();
-            })
-            .then(body => {
-                if (!body.results || body.results.length === 0) {
-                    return message.reply('No anime found with that title.');
-                }
+        const choices = ['rock', 'paper', 'scissors'];
+        const userChoice = args[0]?.toLowerCase();
 
-                const maxResults = Math.min(body.results.length, 5); // Display up to 5 results
-                const embeds = [];
+        if (!userChoice || !choices.includes(userChoice)) {
+            return message.reply('Please choose either "rock," "paper," or "scissors" as your choice.');
+        }
 
-                for (let i = 0; i < maxResults; i++) {
-                    const result = body.results[i];
-                    const title = result.title;
-                    const mal_url = result.url;
-                    const image = result.image_url;
-                    const synopsis = result.synopsis;
-                    const type = result.type;
-                    const episode = result.episodes;
-                    const score = result.score;
-                    const start_date = result.start_date;
-                    const rate = result.rated || 'Unknown';
+        const botChoice = choices[Math.floor(Math.random() * choices.length)];
+        const result = getWinner(userChoice, botChoice);
 
-                    const embed = new MessageEmbed()
-                        .setTitle(title)
-                        .setURL(mal_url)
-                        .setThumbnail(image)
-                        .setDescription(synopsis)
-                        .addFields(
-                            { name: 'Type', value: type },
-                            { name: 'Total episode', value: `${episode}` },
-                            { name: 'Ratings (on MAL)', value: `${score}` },
-                            { name: 'Release date', value: `${moment(start_date).format('LLLL')}` },
-                            { name: 'Rate', value: rate }
-                        )
-                        .setColor('#800080')
-                        .setFooter({
-                            text: `Requested by : ${message.author.tag}`,
-                            iconURL: message.author.displayAvatarURL({ dynamic: true }),
-                        });
+        const embed = new MessageEmbed()
+            .setColor('RANDOM')
+            .setTitle('Rock-Paper-Scissors')
+            .setDescription(`**${message.author.tag}**, you chose ${userChoice}.\nI chose ${botChoice}.\n${result}`)
+            .setFooter('100% not Rigged', client.user.displayAvatarURL({ dynamic: true }));
 
-                    embeds.push(embed);
-                }
-
-                message.channel.send({ embeds: embeds });
-            })
-            .catch(err => {
-                const embedd = new MessageEmbed()
-                    .setDescription(`:x: | An error occurred: ${err.message}`)
-                    .setColor('RED');
-                message.channel.send({ embeds: [embedd] });
-                console.log(err);
-            });
+        message.channel.send({ embeds: [embed] });
     },
 };
+
+function getWinner(userChoice, botChoice) {
+    if (userChoice === botChoice) {
+        return "It's a tie! 🤝";
+    } else if (
+        (userChoice === 'rock' && botChoice === 'scissors') ||
+        (userChoice === 'paper' && botChoice === 'rock') ||
+        (userChoice === 'scissors' && botChoice === 'paper')
+    ) {
+        return 'You win! 🎉';
+    } else {
+        return 'I win! 😄';
+    }
+}

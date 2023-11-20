@@ -43,7 +43,7 @@ module.exports = {
                 embeds: [bugDetails],
             });
 
-            const supportServerLink = 'https://discord.gg/UV22V6fEAv';
+            const supportServerLink = '';
             const thanksEmbed = new MessageEmbed()
                 .setTitle('Thanks for reporting this bug!')
                 .setDescription(

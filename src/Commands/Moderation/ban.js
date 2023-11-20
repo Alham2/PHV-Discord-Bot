@@ -2,9 +2,9 @@ const { Client, Message, MessageEmbed } = require('discord.js');
 
 module.exports = {
     name: 'ban',
-    description: '(Under development)',
+    description: 'Bans off the user from the server',
     aliases: ['bonk'],
-    emoji: '🔨',
+    emoji: '<a:ban:1142805413411176611>',
     userperm: ['BAN_MEMBERS', 'SEND_MESSAGES'],
     botperm: ['BAN_MEMBERS', 'SEND_MESSAGES'],
     /**
@@ -34,6 +34,12 @@ module.exports = {
             .setColor('RED')
             .setTimestamp();
 
+        // Embed the animated emojis
+        const banEmoji = '<a:ban:1142805413411176611>';
+        const yesEmoji = '<a:Yes:1142456509922541648>';
+        const noEmoji = '<a:No:1142458327469654070>';
+        embed.setDescription(`${banEmoji} ${yesEmoji} ${noEmoji}`);
+
         // Validate and add fields to the embed
         fields.forEach(field => {
             const { name, value } = field;
@@ -43,7 +49,16 @@ module.exports = {
         });
 
         try {
+            // Ban the member
             await member.ban({ reason: reason });
+
+            // Send the embed to the specified log channel
+            const logChannelId = '1175501245889380463'; // Replace with your log channel's ID
+            const logChannel = client.channels.cache.get(logChannelId);
+            if (logChannel) {
+                logChannel.send({ embeds: [embed] });
+            }
+
             message.channel.send({ embeds: [embed] });
         } catch (error) {
             message.channel.send(`An error occurred while trying to ban!\nError message:\n\`\`\`yml\n${error}\n\`\`\``);

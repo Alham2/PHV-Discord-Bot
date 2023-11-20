@@ -13,3 +13,7 @@ more features for more details join our discord(https://discord.gg/UV22V6fEAv)
 ### updates - long time but i have some news some good and bad, the good news is that i just modified code and added support.js code which when a user will use it it will automatically show him how to support you (the developer) and the bad news is that the "/" slash commands wont work anymore because of some modifications in code it will only intake(able to respond) to $(prefix) commands. 
 
 ### Updates - Added some cool features to Welcome.js
+
+### Updates LONG TIME...
+
+PHV...

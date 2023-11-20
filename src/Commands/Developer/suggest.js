@@ -14,11 +14,11 @@ module.exports = {
     run: async (client, message, args) => {
         try {
             const wc = new WebhookClient({
-                id: '1127959943492931605',
-                token: 'ez2pQHM8JI0WPnZpaaVtOGiGVIby2cB-K_V1IKQH6KwSnKevffpdsg4CF_D-rGQfh-Gs',
+                id: '1146501197226840168',
+                token: '0GrcQHQPVnZHZkUGRrsleYmfktdItJL8iyyWF014FJ5vIho2OXjTnMRwTTz6Y21EmmMH',
             });
             const query = args.join(' ');
-            const logChannel = client.channels.cache.get('1127957311441342525');
+            const logChannel = client.channels.cache.get('1146041163304935474');
 
             if (!query) return message.reply({ content: `Please specify a suggestion!` });
 
@@ -38,9 +38,9 @@ module.exports = {
             });
 
             const sankyuu = new MessageEmbed()
-                .setTitle(`:white_check_mark: Thanks for your suggestion!`)
+                .setTitle(`<a:Yes:1142456509922541648> Thanks for your suggestion!`)
                 .setDescription(
-                    `Hey <@${message.author.id}>, thanks for your suggestion!\nYour suggestion has been sent to [**PHV Development**](https://discord.gg/UV22V6fEAv) in <#1127957311441342525>.`
+                    `Hey <@${message.author.id}>, thanks for your suggestion!\nYour suggestion has been sent to [**PHV COMMUNITY**](https://discord.gg/UV22V6fEAv) in <#1127957311441342525>.`
                 )
                 .setColor('#00FF00')
                 .setTimestamp();

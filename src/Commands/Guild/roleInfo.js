@@ -5,7 +5,7 @@ module.exports = {
     name: 'roleinfo',
     description: 'Returns Role Information',
     aliases: ['roleinf'],
-    emoji: '<:role:863214921574907915>',
+    emoji: ':roll_of_paper:',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES'],
     /**

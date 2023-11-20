@@ -1,18 +1,17 @@
-const { Client, Message, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { CommandInteraction, Client, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
 
 module.exports = {
     name: 'help',
-    description: 'Help Commands',
-    aliases: ['h'],
-    emoji: '❓',
-    userperm: ['SEND_MESSAGES'],
-    botperm: ['SEND_MESSAGES'],
+    description: 'Show Help List Commands',
+    options: [],
+    userperm: 'SEND_MESSAGES',
+    botperm: 'SEND_MESSAGES',
     /**
      * @param {Client} client
-     * @param {Message} message
+     * @param {CommandInteraction} interaction
      * @param {String[]} args
      */
-    run: async (client, message, args) => {
+    run: async (client, interaction, args) => {
         try {
             const emojis = {
                 config: '⚙️',
@@ -30,6 +29,7 @@ module.exports = {
                 welcoming: '👋',
             };
             const directories = [...new Set(client.commands.map(cmd => cmd.directory))];
+
             const formatString = str => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 
             const categories = directories.map(dir => {
@@ -49,19 +49,13 @@ module.exports = {
                 };
             });
 
-            const color = message.guild.me.displayHexColor;
-
-            const supportServerLink = 'https://discord.gg/UV22V6fEAv';
-            const githubLink = 'https://github.com/PHV08/Discord-MusicBot-5';
-            const youtubeLink = 'https://www.youtube.com/channel/UCGTbFucVXPA9OBTUPZj-TzQ';
-
             const embed = new MessageEmbed()
                 .setTitle('PHV Help Desk')
                 .setThumbnail(client.user.displayAvatarURL({ size: 512 }))
                 .setDescription(
-                    `Please choose a category in the Dropdown menu!\n\nMade with 💖 and Discord.js\n\n[Support Server](${supportServerLink}) | [GitHub](${githubLink}) | [YouTube](${youtubeLink})`
+                    'Please choose a category in the dropdown menu!',
                 )
-                .setColor(color);
+                .setColor('BLUE');
 
             const components = state => [
                 new MessageActionRow().addComponents(
@@ -75,21 +69,21 @@ module.exports = {
                                     label: cmd.directory,
                                     value: cmd.directory.toLowerCase(),
                                     description: `Commands from ${cmd.directory} category`,
-                                    emoji: { name: emojis[cmd.directory.toLowerCase()] || null },
+                                    emoji: emojis[cmd.directory.toLowerCase()] || null,
                                 };
-                            })
-                        )
+                            }),
+                        ),
                 ),
             ];
 
-            const initialMessage = await message.channel.send({
+            const initialMessage = await interaction.followUp({
                 embeds: [embed],
                 components: components(false),
             });
 
-            const filter = interaction => interaction.user.id === interaction.member.user.id;
+            const filter = interaction => interaction.user.id === interaction.user.id;
 
-            const collector = message.channel.createMessageComponentCollector({
+            const collector = interaction.channel.createMessageComponentCollector({
                 filter,
                 componentType: 'SELECT_MENU',
             });
@@ -100,9 +94,8 @@ module.exports = {
 
                 const categoryEmbed = new MessageEmbed()
                     .setTitle(`${emojis[directory.toLowerCase()]} ${formatString(directory)} Commands`)
-                    .setThumbnail(client.user.displayAvatarURL({ dynamic: 512 }))
                     .setDescription(`Here are the list of commands!`)
-                    .setColor(color)
+                    .setColor('BLUE')
                     .addFields(
                         category.commands.map(cmd => {
                             return {
@@ -110,18 +103,18 @@ module.exports = {
                                 value: cmd.description,
                                 inline: true,
                             };
-                        })
+                        }),
                     )
                     .setTimestamp();
 
                 interaction.update({ embeds: [categoryEmbed] });
             });
         } catch (err) {
-            console.log(err);
-            message.channel.send({
-                content: 'Uh oh! Something unexpected happened. Try running the command again!',
+            interaction.followUp({
+                content: 'Uh oh! Something unexcepted. Try to running command again!',
+                ephemeral: true,
             });
+            console.log(err);
         }
     },
 };
-

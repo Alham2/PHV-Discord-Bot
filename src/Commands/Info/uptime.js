@@ -3,8 +3,8 @@ const pretty = require('pretty-ms');
 
 module.exports = {
     name: 'uptime',
-    description: "Returns information about PHV'S Uptime",
-    emoji: '🕘',
+    description: "Returns information about Uptime",
+    emoji: '<a:Clock1:1141767072326619179>',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES'],
     /**
@@ -13,9 +13,16 @@ module.exports = {
      * @param {String[]} args
      */
     run: async (client, message, args) => {
+        const totalUptime = pretty(client.uptime, { verbose: true });
+
         const embed = new MessageEmbed()
-            .setTitle(`🕘 Uptime`)
-            .setDescription(`\`\`\`yml\nStatus : Online\nUptime : ${pretty(client.uptime)}\n\`\`\``)
+            .setTitle('<a:Clock1:1141767072326619179> Uptime Information')
+            .setDescription(`I have been online for **${totalUptime}**.`)
+            .addFields(
+                { name: 'Uptime Details', value: `**Total Uptime:** ${totalUptime}` },
+                { name: 'Uptime Since', value: `**${new Date(Date.now() - client.uptime).toLocaleString()}**` },
+                { name: 'Last Restart', value: `**01/08/2023**` }
+            )
             .setColor(message.guild.me.displayHexColor);
 
         message.channel.send({ embeds: [embed] });

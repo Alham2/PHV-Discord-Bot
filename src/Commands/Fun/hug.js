@@ -5,7 +5,7 @@ module.exports = {
     name: 'hug',
     aliases: [],
     description: 'Hug someone!',
-    emoji: '<a:PeepoHug:879937919920508978>',
+    emoji: '<a:Hug:1142833844240777236>',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES'],
     /**

@@ -5,7 +5,7 @@ module.exports = {
     name: 'meme',
     description: 'Generate Random Memes From Reddit',
     aliases: [],
-    emoji: '🤯',
+    emoji: '<a:meme:1142832705411743835>',
     userperm: ['SEND_MESSAGES'],
     botperm: ['SEND_MESSAGES', 'EMBED_LINKS'],
     /**

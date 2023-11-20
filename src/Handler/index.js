@@ -52,7 +52,7 @@ module.exports = async (client) => {
 
         // Set the Slash Commands globally
         try {
-            await client.application.commands.set(arrayOfSlashCommands);
+            await client.application.commands.set(arrayOnSlashCommands);
         } catch (err) {
             console.log(err);
         }
